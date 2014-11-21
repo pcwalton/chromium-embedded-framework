@@ -807,6 +807,29 @@ void CEF_CALLBACK browser_host_drag_source_system_drag_ended(
   CefBrowserHostCppToC::Get(self)->DragSourceSystemDragEnded();
 }
 
+void CEF_CALLBACK browser_host_composite(struct _cef_browser_host_t* self) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return;
+
+  // Execute
+  CefBrowserHostCppToC::Get(self)->Composite();
+}
+
+void CEF_CALLBACK browser_host_initialize_compositing(
+    struct _cef_browser_host_t* self) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return;
+
+  // Execute
+  CefBrowserHostCppToC::Get(self)->InitializeCompositing();
+}
+
 
 // CONSTRUCTOR - Do not edit by hand.
 
@@ -865,6 +888,8 @@ CefBrowserHostCppToC::CefBrowserHostCppToC(CefBrowserHost* cls)
   struct_.struct_.drag_source_ended_at = browser_host_drag_source_ended_at;
   struct_.struct_.drag_source_system_drag_ended =
       browser_host_drag_source_system_drag_ended;
+  struct_.struct_.composite = browser_host_composite;
+  struct_.struct_.initialize_compositing = browser_host_initialize_compositing;
 }
 
 #ifndef NDEBUG
