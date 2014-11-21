@@ -375,7 +375,9 @@ elif git.is_checkout(cef_dir):
   cef_url = git.get_url(cef_dir)
   cef_rev = git.get_svn_revision(cef_dir)
 else:
-  raise Exception('Not a valid checkout: %s' % (cef_dir))
+  print 'Not a valid checkout: %s' % (cef_dir)
+  cef_url = "http://servo.org"
+  cef_rev = "0"
 
 # retrieve url and revision information for Chromium
 if svn.is_checkout(src_dir):
@@ -393,7 +395,7 @@ date = get_date()
 # Read and parse the version file (key=value pairs, one per line)
 args = {}
 read_version_file(os.path.join(cef_dir, 'VERSION'), args)
-read_version_file(os.path.join(cef_dir, '../chrome/VERSION'), args)
+read_version_file(os.path.join(cef_dir, 'SERVO_VERSION'), args)
 
 cef_ver = args['CEF_MAJOR']+'.'+args['BUILD']+'.'+cef_rev
 chromium_ver = args['MAJOR']+'.'+args['MINOR']+'.'+args['BUILD']+'.'+args['PATCH']
@@ -658,46 +660,7 @@ if platform == 'windows':
       copy_dir(src_dir, docs_output_dir, options.quiet)
 
 elif platform == 'macosx':
-  if options.ninjabuild:
-    out_dir = os.path.join(src_dir, 'out')
-  else:
-    out_dir = os.path.join(src_dir, 'xcodebuild')
-
   valid_build_dir = None
-  framework_name = 'Chromium Embedded Framework'
-
-  if mode == 'standard':
-    # transfer Debug files
-    build_dir = os.path.join(out_dir, 'Debug')
-    if not options.allowpartial or path_exists(os.path.join(build_dir, 'cefclient.app')):
-      valid_build_dir = build_dir
-      dst_dir = os.path.join(output_dir, 'Debug')
-      make_dir(dst_dir, options.quiet)
-      copy_dir(os.path.join(build_dir, 'cefclient.app/Contents/Frameworks/%s.framework' % framework_name), \
-               os.path.join(dst_dir, '%s.framework' % framework_name), options.quiet)
-
-  # transfer Release files
-  build_dir = os.path.join(out_dir, 'Release')
-  if not options.allowpartial or path_exists(os.path.join(build_dir, 'cefclient.app')):
-    valid_build_dir = build_dir
-    dst_dir = os.path.join(output_dir, 'Release')
-    make_dir(dst_dir, options.quiet)
-    if mode != 'client':
-      copy_dir(os.path.join(build_dir, 'cefclient.app/Contents/Frameworks/%s.framework' % framework_name), \
-               os.path.join(dst_dir, '%s.framework' % framework_name), options.quiet)
-    else:
-      copy_dir(os.path.join(build_dir, 'cefclient.app'), os.path.join(dst_dir, 'cefclient.app'), options.quiet)
-
-    if not options.nosymbols:
-      # create the symbol output directory
-      symbol_output_dir = create_output_dir(output_dir_name + '_release_symbols', options.outputdir)
-
-      # create the real dSYM file from the "fake" dSYM file
-      sys.stdout.write("Creating the real dSYM file...\n")
-      src_path = os.path.join(build_dir, \
-          '%s.framework.dSYM/Contents/Resources/DWARF/%s' % (framework_name, framework_name))
-      dst_path = os.path.join(symbol_output_dir, '%s.dSYM' % framework_name)
-      run('dsymutil "%s" -o "%s"' % (src_path, dst_path), cef_dir)
 
   if mode == 'standard':
     # transfer include files
@@ -732,7 +695,8 @@ elif platform == 'macosx':
     transfer_files(cef_dir, script_dir, os.path.join(script_dir, 'distrib/mac/transfer.cfg'), \
                   output_dir, options.quiet)
 
-    create_xcode_projects()
+    # FIXME(pcwalton): Need to get gyp working before this will work.
+    # create_xcode_projects()
 
 elif platform == 'linux':
   out_dir = os.path.join(src_dir, 'out')

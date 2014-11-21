@@ -65,7 +65,8 @@ def write_svn_header(header, chrome_version, cef_version, cpp_header_dir):
     elif git.is_checkout('.'):
       revision = git.get_svn_revision()
     else:
-      raise Exception('Not a valid checkout')
+      print "Warning: Not a valid checkout."
+      revision = "0"
 
     # calculate api hashes
     api_hash_calculator = cef_api_hash(cpp_header_dir, verbose = False)

@@ -17,7 +17,7 @@ print "\nGenerating CEF version header file..."
 gyper = [ 'python', 'tools/make_version_header.py',
           '--header', 'include/cef_version.h',
           '--cef_version', 'VERSION',
-          '--chrome_version', '../chrome/VERSION',
+          '--chrome_version', 'SERVO_VERSION',
           '--cpp_header_dir', 'include' ]
 RunAction(cef_dir, gyper)
 
@@ -35,5 +35,5 @@ if not 'DEPOT_TOOLS_WIN_TOOLCHAIN' in os.environ.keys():
   os.environ['DEPOT_TOOLS_WIN_TOOLCHAIN'] = '0'
 
 os.environ['CEF_DIRECTORY'] = os.path.basename(cef_dir)
-gyper = [ 'python', '../build/gyp_chromium', 'cef.gyp', '-I', 'cef.gypi' ]
+gyper = [ 'python', 'cef.gyp', '-I', 'cef.gypi' ]
 RunAction(cef_dir, gyper)
