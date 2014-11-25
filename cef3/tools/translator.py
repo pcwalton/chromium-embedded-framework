@@ -10,6 +10,7 @@ from make_cpptoc_impl import *
 from make_ctocpp_header import *
 from make_ctocpp_impl import *
 from make_gypi_file import *
+from make_rust_bindings import *
 from optparse import OptionParser
 
 
@@ -39,6 +40,8 @@ parser.add_option('--ctocpp-dir', dest='ctocppdir', metavar='DIR',
                   help='input/output directory for CppToC class translations')
 parser.add_option('--gypi-file', dest='gypifile', metavar='FILE',
                   help='output file for path information')
+parser.add_option('--rust-dir', dest='rustdir', metavar='DIR',
+                  help='input/output directory Rust class translations')
 parser.add_option('--no-cpptoc-header',
                   action='store_true', dest='nocpptocheader', default=False,
                   help='do not output the CppToC headers')
@@ -157,6 +160,18 @@ if not options.gypifile is None:
     if not options.quiet:
         sys.stdout.write('Generating '+options.gypifile+' file...\n')
     writect += write_gypi_file(header, options.gypifile, not options.nobackup)
+
+if not options.rustdir is None:
+    #output the C API header
+    if not options.quiet:
+        sys.stdout.write('In Rust API directory '+options.rustdir+'...\n')
+    filenames = sorted(header.get_file_names())
+    for filename in filenames:
+        if not options.quiet:
+            sys.stdout.write('Generating '+filename+' Rust bindings...\n')
+        writect += write_rust_bindings(header,
+                                       os.path.join(options.rustdir, filename),
+                                       not options.nobackup)
 
 if not options.quiet:
     sys.stdout.write('Done - Wrote '+str(writect)+' files.\n')
